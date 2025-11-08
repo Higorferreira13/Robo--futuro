@@ -4,16 +4,16 @@ FROM node:18
 # Define o diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos do projeto
+# Copia e instala dependências
 COPY package*.json ./
 RUN npm install
 
+# Copia todo o restante do projeto
 COPY . .
 
-# Expõe a porta que o Render usa
+# Expõe a porta padrão do Render
 EXPOSE 3000
 
-# Comando para iniciar o servidor
+# Comando para iniciar o app
 CMD ["node", "server.js"]
-
 
