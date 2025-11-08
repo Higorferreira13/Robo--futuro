@@ -114,3 +114,20 @@ app.listen(PORT, () => {
   console.log(`🚀 Servidor Robô Futuro rodando na porta ${PORT}`);
 });
 
+// 🔹 Rotas Web3 do Robô Futuro (Modo Real)
+const web3 = require("./web3.js");
+app.use(express.json());
+
+// 🔹 Rota para consultar carteira/saldo
+app.get("/carteira", async (req, res) => {
+  const resultado = await web3.conectarCarteira();
+  res.json(resultado);
+});
+
+// 🔹 Rota para enviar transação manual (real)
+app.post("/enviar", async (req, res) => {
+  const { to, amount } = req.body || {};
+  if (!to || !amount) return res.status(400).json({ status: "erro", mensagem: "Parâmetros ausentes." });
+  const resultado = await web3.enviarTx(to, amount);
+  res.json(resultado);
+});
