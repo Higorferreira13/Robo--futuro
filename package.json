@@ -4,7 +4,7 @@
   "description": "Robô Futuro - Automação IA e Web3",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.2"
