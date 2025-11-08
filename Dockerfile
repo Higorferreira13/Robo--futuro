@@ -1,22 +1,19 @@
-# Dockerfile — base Node.js 20
-FROM node:20-alpine
+# Imagem base do Node.js
+FROM node:18
 
-RUN addgroup -S app && adduser -S -G app app
-WORKDIR /usr/src/app
+# Define o diretório de trabalho
+WORKDIR /app
 
+# Copia os arquivos do projeto
 COPY package*.json ./
-# trocar npm ci por npm install para evitar erro sem package-lock
-RUN npm install --production
+RUN npm install
 
 COPY . .
 
-RUN chown -R app:app /usr/src/app
-USER app
-
-ENV NODE_ENV=production
+# Expõe a porta que o Render usa
 EXPOSE 3000
-CMD ["node", "app.js"]
 
-
+# Comando para iniciar o servidor
+CMD ["node", "server.js"]
 
 
