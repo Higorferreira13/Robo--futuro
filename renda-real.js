@@ -1,43 +1,96 @@
+
+// 🌕 Robô Futuro — Módulo de Renda Real v1.2
 import fetch from "node-fetch";
 import fs from "fs";
 import dotenv from "dotenv";
 dotenv.config();
 
-console.log("🚀 Módulo de Geração de Renda Real iniciado...");
+console.log("🚀 Iniciando Módulo de Renda Real do Robô Futuro...");
+console.log("🔗 Conectando às plataformas Galxe, Zealy e Layer3...");
 
-// URLs de fontes de airdrops e recompensas
+// Lista de plataformas com endpoints reais
 const fontes = [
-  "https://api.layer3.xyz/api/v0/tasks", // Layer3
-  "https://api.zealy.io/communities/trending", // Zealy
-  "https://api.galxe.com/query", // Galxe (requere payload)
+  {
+    nome: "Galxe",
+    url: "https://graphigo.prd.galaxy.eco/query",
+    payload: {
+      query: `
+        {
+          campaigns(first: 5, orderBy: updatedAt, orderDirection: desc) {
+            edges {
+              node {
+                id
+                name
+                space {
+                  name
+                }
+                reward
+                endTime
+              }
+            }
+          }
+        }
+      `,
+    },
+  },
+  {
+    nome: "Zealy",
+    url: "https://api.zealy.io/communities/trending",
+    payload: null,
+  },
+  {
+    nome: "Layer3",
+    url: "https://beta.layer3.xyz/api/tasks",
+    payload: null,
+  },
 ];
 
-// Função principal
+// Função para consultar plataformas
 async function buscarOportunidades() {
-  console.log("🔍 Escaneando plataformas de recompensas...");
-
+  console.log(`\n⏳ Iniciando varredura de mercado às ${new Date().toLocaleString("pt-BR")}`);
   const resultados = [];
 
-  for (const url of fontes) {
+  for (const fonte of fontes) {
     try {
-      const resposta = await fetch(url);
+      let resposta;
+      if (fonte.payload) {
+        resposta = await fetch(fonte.url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(fonte.payload),
+        });
+      } else {
+        resposta = await fetch(fonte.url);
+      }
+
       const dados = await resposta.json();
-      resultados.push({ fonte: url, status: "✅ Ativa", total: Object.keys(dados).length });
+      const total = JSON.stringify(dados).length;
+      resultados.push({
+        plataforma: fonte.nome,
+        status: "✅ Online",
+        tamanho: total,
+      });
     } catch (erro) {
-      resultados.push({ fonte: url, status: "⚠️ Offline ou restrita", total: 0 });
+      resultados.push({
+        plataforma: fonte.nome,
+        status: "⚠️ Erro de conexão",
+        detalhe: erro.message,
+      });
     }
   }
 
-  // Log no console e salvamento local
+  // Mostrar resultados no terminal
   console.table(resultados);
-  const hora = new Date().toLocaleString("pt-BR");
+
+  // Salvar relatório em arquivo local
+  const hora = new Date().toISOString();
   const relatorio = { data: hora, resultados };
   fs.writeFileSync("relatorio-renda.json", JSON.stringify(relatorio, null, 2));
 
-  console.log("📁 Relatório de oportunidades atualizado: relatorio-renda.json");
-  console.log("💰 Módulo de Renda Real ativo e trabalhando!");
+  console.log("📁 Relatório salvo em relatorio-renda.json");
+  console.log("💰 Robô Futuro varredura concluída com sucesso!");
 }
 
-// Executa a cada 30 minutos
-setInterval(buscarOportunidades, 1800000);
+// Executa a função a cada 45 minutos
+setInterval(buscarOportunidades, 2700000);
 buscarOportunidades();
