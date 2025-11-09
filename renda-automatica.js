@@ -1,43 +1,37 @@
-// renda-automatica.js
 import fetch from "node-fetch";
-import fs from "fs";
+import dotenv from "dotenv";
+dotenv.config();
 
-console.log("🤖 Iniciando Módulo de Renda Automática...");
-
-// Dados da carteira
-const carteira = "0xDA2e3B678439059fb473204398423Cbe0b2bA40f";
-const logFile = "./renda-log.txt";
+const API_URL = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,usd-coin&vs_currencies=usd";
 
 async function buscarOportunidades() {
-  console.log("🔍 Buscando oportunidades Web3 e airdrops...");
+  console.log("🔍 Buscando oportunidades de renda...");
+
   try {
-    const respostas = await Promise.all([
-      fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin&vs_currencies=usd"),
-      fetch("https://api.binance.com/api/v3/ticker/price"),
-    ]);
+    const resposta = await fetch(API_URL);
+    const dados = await resposta.json();
 
-    const [precos, binance] = await Promise.all(respostas.map(r => r.json()));
+    const btc = dados.bitcoin?.usd || 0;
+    const eth = dados.ethereum?.usd || 0;
+    const usdc = dados["usd-coin"]?.usd || 0;
 
-    const data = {
-      hora: new Date().toLocaleString(),
-      carteira,
-      oportunidades: [
-        { nome: "ETH", valor: precos.ethereum.usd },
-        { nome: "BTC", valor: precos.bitcoin.usd },
-      ],
-      binance: binance.slice(0, 5),
-    };
+    console.log(`📊 BTC: $${btc} | ETH: $${eth} | USDC: $${usdc}`);
 
-    // Salva log local (Render armazena temporariamente)
-    fs.writeFileSync(logFile, JSON.stringify(data, null, 2));
-    console.log("💼 Dados atualizados e salvos:", data.oportunidades);
-    console.log("📦 Relatório pronto para envio ao Google Drive.");
+    const oportunidades = [
+      { token: "BTC", preco: btc, oportunidade: btc < 65000 ? "COMPRAR" : "AGUARDAR" },
+      { token: "ETH", preco: eth, oportunidade: eth < 3000 ? "COMPRAR" : "AGUARDAR" },
+      { token: "USDC", preco: usdc, oportunidade: "ESTÁVEL" },
+    ];
+
+    console.table(oportunidades);
+    console.log("💰 Módulo de renda automática ativo com sucesso!");
 
   } catch (erro) {
     console.error("❌ Erro ao buscar oportunidades:", erro.message);
   }
 }
 
-// Roda a cada 30 minutos automaticamente
-setInterval(buscarOportunidades, 30 * 60 * 1000);
+setInterval(buscarOportunidades, 60000);
 buscarOportunidades();
+
+console.log("🤖 Módulo de Renda Automática iniciado!");
