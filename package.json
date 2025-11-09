@@ -1,8 +1,9 @@
 {
+  "type": "module",
   "name": "robo-futuro",
   "version": "1.0.0",
   "description": "Robô Futuro - Automação IA e Web3",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
@@ -10,6 +11,7 @@
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "ethers": "^6.15.0",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "cors": "^2.8.5"
   }
 }
