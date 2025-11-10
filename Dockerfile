@@ -1,25 +1,23 @@
 # Imagem base do Node.js
 FROM node:18
 
-# Define o diretório de trabalho
+# Definir o diretório de trabalho
 WORKDIR /app
 
-# Copia e instala dependências
+# Copiar arquivos de dependências e instalar
 COPY package*.json ./
 RUN npm install
 
-# Copia todo o restante do projeto
+# Copiar o restante do projeto
 COPY . .
 
-# Expõe a porta padrão do Render
+# Expor a porta padrão do Render
 EXPOSE 3000
 
-# Comando para iniciar o app
-CMD ["node", "server.js"]
-
-# Copia os arquivos do painel para o servidor
+# Copiar os arquivos do painel para o servidor
 COPY painel /usr/share/nginx/html
 
-# Inicia o servidor com o painel e o robô
+# Comando para iniciar o servidor e o painel
 CMD ["sh", "-c", "node server.js && node renda-automatica.js && node renda-real.js"]
+
 
