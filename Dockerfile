@@ -17,3 +17,9 @@ EXPOSE 3000
 # Comando para iniciar o app
 CMD ["node", "server.js"]
 
+# Copia os arquivos do painel para o servidor
+COPY painel /usr/share/nginx/html
+
+# Inicia o servidor com o painel e o robô
+CMD ["sh", "-c", "node server.js && node renda-automatica.js && node renda-real.js"]
+
