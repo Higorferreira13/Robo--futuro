@@ -1,10 +1,13 @@
-# Usa a imagem oficial do Node.js
+# Usa a imagem oficial do Node.js como base
 FROM node:18
 
-# Define o diretório de trabalho
+# Define o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Instala dependências do projeto
+# Copia os arquivos do projeto para o container
+COPY . .
+
+# Instala as dependências
 RUN npm install
 
 # Expõe a porta usada pelo Render
