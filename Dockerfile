@@ -1,23 +1,21 @@
-# Imagem base do Node.js
+# Usa a imagem oficial do Node.js
 FROM node:18
 
-# Definir o diretório de trabalho
+# Define o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Copiar arquivos de dependências e instalar
+# Copia os arquivos de dependência e instala
 COPY package*.json ./
 RUN npm install
 
-# Copiar o restante do projeto
+# Copia todo o restante do código para o container
 COPY . .
 
-# Expor a porta padrão do Render
+# Expõe a porta usada pelo Render
 EXPOSE 3000
 
-# Copiar os arquivos do painel para o servidor
+# Copia o painel HTML para o servidor interno
 COPY painel /usr/share/nginx/html
 
-# Comando para iniciar o servidor e o painel
+# Comando para rodar o servidor e os módulos de renda
 CMD ["sh", "-c", "node server.js && node renda-automatica.js && node renda-real.js"]
-
-
