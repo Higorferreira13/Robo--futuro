@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robô Futuro | Painel Web3</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top left, #0a0a0a, #181818);
+      color: #00ffb7;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 { color: #00ffaa; margin-bottom: 10px; }
+    .card {
+      background: #101010;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0,255,180,0.2);
+    }
+    button {
+      background: #00ffb7;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background: #00ffaa; }
+    .status {
+      margin-top: 15px;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>🤖 Robô Futuro</h1>
+  <p>Conecte sua carteira e monitore os módulos do sistema em tempo real.</p>
+
+  <div class="card">
+    <h3>🔗 Conexão Web3</h3>
+    <button id="connect">Conectar Metamask</button>
+    <p id="wallet" class="status">Carteira não conectada</p>
+  </div>
+
+  <div class="card">
+    <h3>📊 Status do Robô</h3>
+    <p id="status">Carregando...</p>
+  </div>
+
+  <script type="module">
+    import detectEthereumProvider from "https://cdn.jsdelivr.net/npm/@metamask/detect-provider/dist/detect-provider.min.js";
+
+    const connectBtn = document.getElementById("connect");
+    const walletDisplay = document.getElementById("wallet");
+    const statusDisplay = document.getElementById("status");
+
+    connectBtn.onclick = async () => {
+      const provider = await detectEthereumProvider();
+      if (provider) {
+        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+        walletDisplay.textContent = "Carteira conectada: " + accounts[0];
+      } else {
+        walletDisplay.textContent = "Metamask não encontrada!";
+      }
+    };
+
+    async function atualizarStatus() {
+      try {
+        const resposta = await fetch("https://robo-futuro.onrender.com");
+        if (resposta.ok) {
+          statusDisplay.textContent = "✅ Robô Futuro está ativo e em execução!";
+        } else {
+          statusDisplay.textContent = "⚠️ Conexão instável com o servidor.";
+        }
+      } catch {
+        statusDisplay.textContent = "❌ Servidor offline ou não detectado.";
+      }
+    }
+
+    setInterval(atualizarStatus, 5000);
+    atualizarStatus();
+  </script>
+</body>
+</html>
