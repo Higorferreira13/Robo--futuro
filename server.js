@@ -1,4 +1,4 @@
-
+// server.js
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -11,24 +11,39 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Importar o módulo automático
-import "./renda-automatica.js";
+// Importar módulos principais
+import { startLoop } from "./renda-automatica.js";
+import { iniciarAnaliseMercado } from "./inteligencia-mercado.js";
 
-// Página inicial
+// Página inicial (teste online)
 app.get("/", (req, res) => {
   res.send(`
-    <h1>🤖 Robô Futuro conectado em modo real!</h1>
-    <p>Status: <b>Online e ativo na nuvem Render 🚀</b></p>
-    <p>Módulo de renda automática ativo ✅</p>
+    <h1>🤖 Robô Futuro conectado na nuvem Render</h1>
+    <p>Status: <b>Online e operando em modo real</b> 🚀</p>
+    <p>Módulo de Renda Automática: ✅ Ativo</p>
+    <p>Módulo de Inteligência de Mercado: 🧠 Ativo</p>
   `);
 });
 
-// Manter o app ativo
-setInterval(() => {
-  console.log("🔄 Robô Futuro verificando novas tarefas...");
-}, 300000); // a cada 5 minutos
+// Iniciar os módulos automáticos
+try {
+  console.log("🧠 Iniciando módulo de inteligência de mercado...");
+  iniciarAnaliseMercado();
 
-// Inicializar o servidor
+  console.log("💸 Iniciando módulo de renda automática...");
+  startLoop();
+
+  console.log("✅ Todos os módulos iniciados com sucesso!");
+} catch (error) {
+  console.error("❌ Erro ao iniciar os módulos:", error);
+}
+
+// Manter o app ativo (ping preventivo)
+setInterval(() => {
+  console.log("🔄 Robô Futuro verificando novas oportunidades...");
+}, 300000); // 5 minutos
+
+// Inicializar servidor
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`✅ Servidor online na porta ${PORT}`);
