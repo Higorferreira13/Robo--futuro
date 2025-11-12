@@ -1,22 +1,15 @@
-
-// server.js
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import { startLoop } from "./renda-automatica.js";
+import { iniciarAnaliseMercado } from "./inteligencia-mercado.js";
 
-// Carregar variáveis de ambiente
 dotenv.config();
 
-// Inicializar o app
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Importar módulos principais
-import { startLoop } from "./renda-automatica.js";
-import { iniciarAnaliseMercado } from "./inteligencia-mercado.js";
-
-// Página inicial
 app.get("/", (req, res) => {
   res.send(`
     <h1>🤖 Robô Futuro conectado na nuvem Render</h1>
@@ -26,7 +19,6 @@ app.get("/", (req, res) => {
   `);
 });
 
-// Iniciar os módulos
 (async () => {
   try {
     console.log("🧠 Iniciando módulo de inteligência de mercado...");
@@ -41,12 +33,10 @@ app.get("/", (req, res) => {
   }
 })();
 
-// Manter o app ativo (ping preventivo)
 setInterval(() => {
   console.log("🔄 Robô Futuro ativo, verificando novas oportunidades...");
-}, 180000); // a cada 3 minutos
+}, 180000);
 
-// Inicializar servidor web
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`✅ Servidor online na porta ${PORT}`);
