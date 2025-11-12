@@ -15,7 +15,7 @@ app.use(express.json());
 import { startLoop } from "./renda-automatica.js";
 import { iniciarAnaliseMercado } from "./inteligencia-mercado.js";
 
-// Página inicial (teste online)
+// Página inicial
 app.get("/", (req, res) => {
   res.send(`
     <h1>🤖 Robô Futuro conectado na nuvem Render</h1>
@@ -25,27 +25,29 @@ app.get("/", (req, res) => {
   `);
 });
 
-// Iniciar os módulos automáticos
-try {
-  console.log("🧠 Iniciando módulo de inteligência de mercado...");
-  iniciarAnaliseMercado();
+// Inicializar os módulos
+(async () => {
+  try {
+    console.log("🧠 Iniciando módulo de inteligência de mercado...");
+    await iniciarAnaliseMercado();
 
-  console.log("💸 Iniciando módulo de renda automática...");
-  startLoop();
+    console.log("💸 Iniciando módulo de renda automática...");
+    await startLoop();
 
-  console.log("✅ Todos os módulos iniciados com sucesso!");
-} catch (error) {
-  console.error("❌ Erro ao iniciar os módulos:", error);
-}
+    console.log("✅ Todos os módulos iniciados com sucesso!");
+  } catch (error) {
+    console.error("❌ Erro ao iniciar módulos:", error);
+  }
+})();
 
 // Manter o app ativo (ping preventivo)
 setInterval(() => {
-  console.log("🔄 Robô Futuro verificando novas oportunidades...");
-}, 300000); // 5 minutos
+  console.log("🔄 Robô Futuro ativo, verificando novas oportunidades...");
+}, 180000); // 3 minutos
 
-// Inicializar servidor
+// Iniciar servidor web
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`✅ Servidor online na porta ${PORT}`);
-  console.log("🤖 Robô Futuro rodando 100% autônomo!");
+  console.log("🤖 Robô Futuro rodando em modo contínuo!");
 });
