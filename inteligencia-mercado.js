@@ -1,3 +1,4 @@
+
 // inteligencia-mercado.js
 import axios from "axios";
 
@@ -39,7 +40,6 @@ export function iniciarAnaliseMercado() {
     }
   }
 
-  // Executa a cada 1 minuto
   analisar();
   setInterval(analisar, 60000);
 }
