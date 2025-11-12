@@ -1,3 +1,4 @@
+
 // server.js
 import express from "express";
 import dotenv from "dotenv";
@@ -19,20 +20,20 @@ import { iniciarAnaliseMercado } from "./inteligencia-mercado.js";
 app.get("/", (req, res) => {
   res.send(`
     <h1>🤖 Robô Futuro conectado na nuvem Render</h1>
-    <p>Status: <b>Online e operando em modo real</b> 🚀</p>
+    <p>Status: <b>Online e operando em modo real 🚀</b></p>
     <p>Módulo de Renda Automática: ✅ Ativo</p>
     <p>Módulo de Inteligência de Mercado: 🧠 Ativo</p>
   `);
 });
 
-// Inicializar os módulos
+// Iniciar os módulos
 (async () => {
   try {
     console.log("🧠 Iniciando módulo de inteligência de mercado...");
-    await iniciarAnaliseMercado();
+    iniciarAnaliseMercado();
 
     console.log("💸 Iniciando módulo de renda automática...");
-    await startLoop();
+    startLoop();
 
     console.log("✅ Todos os módulos iniciados com sucesso!");
   } catch (error) {
@@ -43,11 +44,11 @@ app.get("/", (req, res) => {
 // Manter o app ativo (ping preventivo)
 setInterval(() => {
   console.log("🔄 Robô Futuro ativo, verificando novas oportunidades...");
-}, 180000); // 3 minutos
+}, 180000); // a cada 3 minutos
 
-// Iniciar servidor web
+// Inicializar servidor web
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`✅ Servidor online na porta ${PORT}`);
-  console.log("🤖 Robô Futuro rodando em modo contínuo!");
+  console.log("🤖 Robô Futuro rodando 100% autônomo!");
 });
