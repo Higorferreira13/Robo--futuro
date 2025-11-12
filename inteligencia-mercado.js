@@ -1,44 +1,28 @@
-// renda-automatica.js
-import { ethers } from "ethers";
+// inteligencia-mercado.js
+import axios from "axios";
 
-const RPC = process.env.PROVIDER_URL;
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const WALLET_ADDR = process.env.WALLET_ADDR;
-const PROFIT_WITHDRAW_ETH = parseFloat(process.env.PROFIT_WITHDRAW_ETH || "0.002");
+export async function iniciarAnaliseMercado() {
+  console.log("🧠 Iniciando análise de mercado automática...");
 
-if(!RPC || !PRIVATE_KEY || !WALLET_ADDR){
-  console.error("Variáveis de ambiente faltando em renda-automatica.js");
-}
-
-const provider = new ethers.providers.JsonRpcProvider(RPC);
-const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
-
-// exportaremos startLoop para o server.js
-export async function startLoop(){
-  console.log("🔁 startLoop da renda automática iniciado");
   try {
-    // exemplo simples: checar saldo do endereço do robô (wallet)
-    const balance = await provider.getBalance(wallet.address);
-    const balanceEth = parseFloat(ethers.utils.formatEther(balance));
-    console.log("💰 Saldo do robô (ETH):", balanceEth);
+    const response = await axios.get(
+      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,usd-coin&vs_currencies=usd"
+    );
 
-    // se saldo >= PROFIT_WITHDRAW_ETH, faz transferência para WALLET_ADDR
-    if(balanceEth >= PROFIT_WITHDRAW_ETH){
-      const amountToSend = PROFIT_WITHDRAW_ETH; // valor a enviar (padrão)
-      console.log("➡️ Enviando lucro:", amountToSend, "ETH para", WALLET_ADDR);
+    const dados = response.data;
 
-      const tx = await wallet.sendTransaction({
-        to: WALLET_ADDR,
-        value: ethers.utils.parseEther(amountToSend.toString()),
-        // gasLimit e gasPrice podemos deixar pro provedor estimar
-      });
-      console.log("TX enviado:", tx.hash);
-      await tx.wait();
-      console.log("✅ TX confirmada:", tx.hash);
-    } else {
-      console.log("🔎 Sem lucro suficiente ainda. Meta:", PROFIT_WITHDRAW_ETH);
-    }
-  } catch (e) {
-    console.error("Erro em startLoop:", e && e.message ? e.message : e);
+    const btc = dados.bitcoin.usd;
+    const eth = dados.ethereum.usd;
+    const usdc = dados["usd-coin"].usd;
+
+    console.table([
+      { índice: 0, token: "BTC", preço: `$${btc}`, oportunidade: btc < 60000 ? "COMPRAR" : "AGUARDAR" },
+      { índice: 1, token: "ETH", preço: `$${eth}`, oportunidade: eth < 3500 ? "COMPRAR" : "AGUARDAR" },
+      { índice: 2, token: "USDC", preço: `$${usdc}`, oportunidade: "ESTÁVEL" },
+    ]);
+
+    console.log("🧩 Módulo de inteligência de mercado ativo com sucesso!");
+  } catch (erro) {
+    console.error("❌ Erro ao buscar dados de mercado:", erro.message);
   }
 }
