@@ -1,3 +1,11 @@
+import { okx } from "./okx.js";
+
+async function testarSaldo() {
+  const saldo = await okx.account.getBalance();
+  console.log("💰 Saldo OKX:", saldo);
+}
+
+testarSaldo();
 
 // 🌕 Robô Futuro — Módulo de Renda Real v1.2
 import fetch from "node-fetch";
